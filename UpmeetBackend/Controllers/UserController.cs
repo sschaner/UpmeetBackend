@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UpmeetBackend.Models;
-using Flurl.Http;
 
 namespace UpmeetBackend.Controllers
 {
@@ -14,18 +13,16 @@ namespace UpmeetBackend.Controllers
     public class UserController : Controller
     {
         // GET: api/<UserController>
-        //[HttpGet]
-        public async Task<IEnumerable<User>> GetAllUsers()
+        [HttpGet]
+        public List<User> GetAllUsers()
         {
-            // Query from database call to make a list
-             
-            //List<User> userCollection = new List<User>();
+            List<User> result = null;
+            using (UpmeetBackendContext context = new UpmeetBackendContext())
+            {
+                result = context.Users.ToList();
+            }
 
-            //string apiUri = "localhost/api/users";
-            //var apiTask = await apiUri.GetJsonAsync<UserCollection>();
-            //userCollection.AddRange(apiTask.results);
-
-            //return userCollection;
+            return result;
         }
 
         // GET api/
