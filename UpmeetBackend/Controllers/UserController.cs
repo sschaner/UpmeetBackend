@@ -25,7 +25,22 @@ namespace UpmeetBackend.Controllers
             return result;
         }
 
-        // GET api/
+
+
+        // GET api/<UserController>/id
+        [HttpGet("{id}")]
+        public User GetUserById(int id)
+        {
+            List<User> result = null;
+            User user = null;
+            using (UpmeetBackendContext context = new UpmeetBackendContext())
+            {
+                result = context.Users.ToList();
+                user = result[id-1];
+            }
+
+            return user;
+        }
 
         // GET: UserController
         public ActionResult Index()

@@ -25,6 +25,21 @@ namespace UpmeetBackend.Controllers
             return result;
         }
 
+        // GET api/<UserController>/id
+        [HttpGet("{id}")]
+        public Event GetEventById(int id)
+        {
+            List<Event> result = null;
+            Event upMeet = null;
+            using (UpmeetBackendContext context = new UpmeetBackendContext())
+            {
+                result = context.Events.ToList();
+                upMeet = result[id - 1];
+            }
+
+            return upMeet;
+        }
+
         // GET: EventController
         public ActionResult Index()
         {
