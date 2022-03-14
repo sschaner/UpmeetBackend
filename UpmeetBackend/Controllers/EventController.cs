@@ -34,85 +34,23 @@ namespace UpmeetBackend.Controllers
             using (UpmeetBackendContext context = new UpmeetBackendContext())
             {
                 result = context.Events.ToList();
+                // [id - 1] but [id - 1000] if the table auto increments, starting at 1000.
                 upMeet = result[id - 1];
             }
 
             return upMeet;
         }
 
-        // GET: EventController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: EventController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: EventController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: EventController/Create
+        // This method adds to the Events table using Postman but the auto increment of the UserId starts at 1000
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public Event SaveEvent(Event upMeet)
         {
-            try
+            using (UpmeetBackendContext context = new UpmeetBackendContext())
             {
-                return RedirectToAction(nameof(Index));
+                context.Events.Add(upMeet);
+                context.SaveChanges();
             }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EventController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: EventController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EventController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: EventController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return upMeet;
         }
     }
 }
