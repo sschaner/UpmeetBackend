@@ -25,8 +25,6 @@ namespace UpmeetBackend.Controllers
             return result;
         }
 
-
-
         // GET api/<UserController>/id
         [HttpGet("{id}")]
         public User GetUserById(int id)
