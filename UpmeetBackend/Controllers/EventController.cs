@@ -38,13 +38,26 @@ namespace UpmeetBackend.Controllers
             return upMeet;
         }
 
-        // This method adds to the Events table using Postman but the auto increment of the UserId starts at 1000
         [HttpPost]
         public Event SaveEvent(Event upMeet)
         {
             using (UpmeetBackendContext context = new UpmeetBackendContext())
             {
                 context.Events.Add(upMeet);
+                context.SaveChanges();
+            }
+            return upMeet;
+        }
+
+
+        [HttpDelete("{id}")]
+        public Event RemoveEventById(int id)
+        {
+            Event upMeet = new Event();
+            using (UpmeetBackendContext context = new UpmeetBackendContext())
+            {
+                upMeet = context.Events.Where(x => x.EventId == id).FirstOrDefault();
+                context.Events.Remove(upMeet);
                 context.SaveChanges();
             }
             return upMeet;
