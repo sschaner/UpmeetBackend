@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace UpmeetBackend.Models
 {
-    public class Favorite
+    public class UserEvent
     {
-        [Key]
-        public int FavoriteId { get; set; }
-        public int userId { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
+
         public int EventId { get; set; }
+        public Event Event { get; set; }
+
     }
 }
