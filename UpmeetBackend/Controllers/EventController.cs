@@ -29,13 +29,10 @@ namespace UpmeetBackend.Controllers
         [HttpGet("{id}")]
         public Event GetEventById(int id)
         {
-            List<Event> result = null;
-            Event upMeet = null;
+            Event upMeet = new Event();
             using (UpmeetBackendContext context = new UpmeetBackendContext())
             {
-                result = context.Events.ToList();
-                // [id - 1] but [id - 1000] if the table auto increments, starting at 1000.
-                upMeet = result[id - 1];
+                upMeet = context.Events.Where(x => x.EventId == id).FirstOrDefault();
             }
 
             return upMeet;
