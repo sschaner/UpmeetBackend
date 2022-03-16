@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UpmeetBackend.Models;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,20 +15,46 @@ namespace UpmeetBackend.Controllers
     [ApiController]
     public class UserEventController : ControllerBase
     {
+        private readonly UpmeetBackendContext _context;
+        public UserEventController(UpmeetBackendContext context)
+        {
+            _context = context;
+        }
+
 
         // GET api/<UserEventController>/5
         [HttpGet("{id}")]
-        public IEnumerable<Event> UserFavEvents(int userId)
+        [Produces("application/json")]
+        public ActionResult<IEnumerable<Event>> UserFavEvents(int userId)
         {
-            List<Event> FavoriteEvents = new List<Event>();
-            using (UpmeetBackendContext context = new UpmeetBackendContext())
+
+            //User user = _context.Users.Where(x=>x.UserId == userId).FirstOrDefault();
+
+
+
+            //_context.Entry(user).Collection(x=>x.UserEvents).Load();
+
+            List<Event> favEvents = new List<Event>();
+
+            var events = _context.Users
+                .Where(u => u.UserId == userId)
+                .Include(u => u.UserEvents)
+                    .ThenInclude(ue => ue.Event)
+                .ToList();
+
+            foreach(var item in events)
             {
-                foreach (var item in context.UserEvents.Where(x => x.UserId == userId))
+                foreach(var eEvent in item.UserEvents)
                 {
-                    FavoriteEvents.Add(item.Event);
+                    favEvents.Add(_context.Events.Where(x=>x.EventId == eEvent.EventId).FirstOrDefault());
                 }
+               
+               // yield return new Event { UserId = item.UserId, Event = item };
             }
-            return FavoriteEvents;
+
+            return favEvents;
+
+
         }
 
         // POST api/<UserEventController>

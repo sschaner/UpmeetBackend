@@ -16,6 +16,9 @@ namespace UpmeetBackend.Models
         [Required]
         [StringLength(100, ErrorMessage = "Your last name must be 100 characters or less.")]
         public string LastName { get; set; }
-        public ICollection<UserEvent> UserEvents { get; set; }
+
+#nullable enable
+        public virtual ICollection<UserEvent>? UserEvents { get; set; } = new List<UserEvent>();
+#nullable disable
     }
 }
