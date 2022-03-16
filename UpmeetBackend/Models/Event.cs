@@ -25,8 +25,8 @@ namespace UpmeetBackend.Models
         public DateTime Start { get; set; }
         [Required]
         public DateTime End { get; set; }
-#nullable enable
-        public virtual ICollection<UserEvent>? UserEvents { get; set; } = new List<UserEvent>();
-#nullable disable
+
+        public virtual ICollection<UserEvent> UserEvents { get; set; }
+
     }
 }

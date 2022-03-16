@@ -11,11 +11,11 @@ namespace UpmeetBackend.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<UserEvent> UserEvents { get; set; }
-       
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-JBSJ4GG;Database=UpMeet;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=DESKTOP-N53U2QF;Database=UpMeet;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace UpmeetBackend.Models
             modelBuilder.Entity<UserEvent>()
                 .HasOne(ue => ue.User)
                 .WithMany(u => u.UserEvents)
-                .HasForeignKey(bc => bc. UserId);
+                .HasForeignKey(bc => bc.UserId);
             modelBuilder.Entity<UserEvent>()
                 .HasOne(ue => ue.Event)
                 .WithMany(e => e.UserEvents)
