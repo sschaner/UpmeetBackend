@@ -15,7 +15,7 @@ namespace UpmeetBackend.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-N53U2QF;Database=UpMeet;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=DESKTOP-JBSJ4GG;Database=UpMeet;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

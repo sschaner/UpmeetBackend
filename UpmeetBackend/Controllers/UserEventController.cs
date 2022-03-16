@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using UpmeetBackend.Models;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,28 +20,32 @@ namespace UpmeetBackend.Controllers
     {
 
         // GET api/<UserEventController>/5
-        [HttpGet("{id:int}")]
-    
-        public IEnumerable<Event> GetUserFavEvents( int userId)
+        [HttpGet("{id}")]
+        public IActionResult GetUserFavEvents( int userId)
         {
-            List<Event> favEvents = new List<Event>();
+           
             using (UpmeetBackendContext context = new UpmeetBackendContext())
             {
 
-                favEvents = context.Events.Where(e => e.UserEvents.Any(u => u.UserId == userId)).ToList();
+                 var result = context.Users
+                 .Where(x => x.UserId == userId)
+                 .Include(x => x.UserEvents)
+                 .ThenInclude(x => x.Event)
+                 .ToList();
 
-                foreach (Event eEvnt in favEvents)
-                {
-
-                }
 
             }
-            return favEvents;
+
+            return Ok();
 
         }
         [HttpPost]
-        public static void UserFavEvents(int userId, int eventId)
-        {
+        public IActionResult UserFavEvents([FromBody] JObject json)
+        { 
+            UserEventDto request = JsonConvert.DeserializeObject<UserEventDto>(json.ToString());
+            int userId = Int32.Parse(request.UserId);
+            int eventId = Int32.Parse(request.EventId);
+
             User user = new User();
             Event eEvent = new Event();
 
@@ -48,8 +54,13 @@ namespace UpmeetBackend.Controllers
                 user = context.Users.Where(x => x.UserId == userId).FirstOrDefault();
                 eEvent = context.Events.Where(x => x.EventId == eventId).FirstOrDefault();
 
-                context.UserEvents.Add(new UserEvent() { UserId = userId, User = user, EventId = eventId, Event = eEvent });
-                context.SaveChanges();
+                context.UserEvents.Add(new UserEvent() { UserId = userId,  EventId = eventId});
+
+                if (context.SaveChanges() > 0)
+                {
+                    return Ok();
+                }
+                else return BadRequest("Nope");
             }
         }
 
