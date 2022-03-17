@@ -20,32 +20,27 @@ namespace UpmeetBackend.Controllers
     {
 
         // GET api/<UserEventController>/5
-        [HttpGet("{id}")]
-        public IActionResult GetUserFavEvents( int userId)
+        [HttpGet]
+        public ActionResult<IEnumerable<Event>> GetUserFavEvents( int userId)
         {
-           
-            using (UpmeetBackendContext context = new UpmeetBackendContext())
+            List<Event> favEvents = new List<Event>();
+             using (UpmeetBackendContext context = new UpmeetBackendContext())
             {
+                    var userFavs = context.Users
+                        .Include(u=>u.UserEvents)
+                        .ThenInclude(e =>e.Event)
+                        .First(u =>u.UserId == userId);
+                    favEvents = userFavs.UserEvents.Select(e => e.Event).ToList();
+               
+            };
 
-                 var result = context.Users
-                 .Where(x => x.UserId == userId)
-                 .Include(x => x.UserEvents)
-                 .ThenInclude(x => x.Event)
-                 .ToList();
+            return favEvents;
 
-
-            }
-
-            return Ok();
 
         }
         [HttpPost]
-        public IActionResult UserFavEvents([FromBody] JObject json)
+        public void UserFavEvents(int userId, int eventId)
         { 
-            UserEventDto request = JsonConvert.DeserializeObject<UserEventDto>(json.ToString());
-            int userId = Int32.Parse(request.UserId);
-            int eventId = Int32.Parse(request.EventId);
-
             User user = new User();
             Event eEvent = new Event();
 
@@ -53,19 +48,25 @@ namespace UpmeetBackend.Controllers
             {
                 user = context.Users.Where(x => x.UserId == userId).FirstOrDefault();
                 eEvent = context.Events.Where(x => x.EventId == eventId).FirstOrDefault();
-
-                context.UserEvents.Add(new UserEvent() { UserId = userId,  EventId = eventId});
-
-                if (context.SaveChanges() > 0)
+                try
                 {
-                    return Ok();
+                    context.UserEvents.Add(new UserEvent() { UserId = userId, User = user, EventId = eventId, Event = eEvent });
+
+                    context.SaveChanges();
                 }
-                else return BadRequest("Nope");
+                catch (Exception)
+                {
+
+                   
+                }
+               
+                
+                
             }
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public void Delete(int userId, int eventId)
         {
             UserEvent userEvent = new UserEvent();
