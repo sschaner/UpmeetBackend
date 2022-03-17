@@ -8,13 +8,14 @@ namespace UpmeetBackend.Models
 {
     public class UpmeetBackendContext : DbContext
     {
+        public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<UserEvent> UserEvents { get; set; }
-        public DbSet<User> Users { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=UpMeet;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=DESKTOP-JBSJ4GG;Database=UpMeet;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

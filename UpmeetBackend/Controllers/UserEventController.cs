@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UpmeetBackend.Models;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,21 +20,24 @@ namespace UpmeetBackend.Controllers
     {
 
         // GET api/<UserEventController>/5
-        [HttpGet("{id}")]
-        public IEnumerable<Event> UserFavEvents(int userId)
+        [HttpGet]
+        public ActionResult<IEnumerable<Event>> GetUserFavEvents( int userId)
         {
-            List<Event> FavoriteEvents = new List<Event>();
-            using (UpmeetBackendContext context = new UpmeetBackendContext())
+            List<Event> favEvents = new List<Event>();
+             using (UpmeetBackendContext context = new UpmeetBackendContext())
             {
-                foreach (var item in context.UserEvents.Where(x => x.UserId == userId))
-                {
-                    FavoriteEvents.Add(item.Event);
-                }
-            }
-            return FavoriteEvents;
+                    var userFavs = context.Users
+                        .Include(u=>u.UserEvents)
+                        .ThenInclude(e =>e.Event)
+                        .First(u =>u.UserId == userId);
+                    favEvents = userFavs.UserEvents.Select(e => e.Event).ToList();
+               
+            };
+
+            return favEvents;
+
         }
 
-        // POST api/<UserEventController>?userId=userId&eventId=eventId
         [HttpPost]
         public void UserFavEvents(int userId, int eventId)
         { 
@@ -42,20 +50,29 @@ namespace UpmeetBackend.Controllers
                 eEvent = context.Events.Where(x => x.EventId == eventId).FirstOrDefault();
                 try
                 {
-                    context.UserEvents.Add(new UserEvent() { UserId = userId, EventId = eventId });
+
+                    context.UserEvents.Add(new UserEvent() { UserId = userId, User = user, EventId = eventId, Event = eEvent });
+
                     context.SaveChanges();
                 }
                 catch (Exception)
                 {
 
+                   
                 }
+               
+                
+
+
                 
             }
         }
 
-        // DELETE api/<UserEventController>?userId=userId&eventId=eventId
+
+
         [HttpDelete]
-        public static void Delete(int userId, int eventId)
+        public void Delete(int userId, int eventId)
+
         {
             UserEvent userEvent = new UserEvent();
 
@@ -66,5 +83,7 @@ namespace UpmeetBackend.Controllers
                 context.SaveChanges();
             }
         }
+
     }
 }
+
