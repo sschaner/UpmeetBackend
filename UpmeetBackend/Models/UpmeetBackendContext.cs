@@ -20,7 +20,16 @@ namespace UpmeetBackend.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserEvent>().HasKey(ue => new { ue.UserId, ue.EventId });
+            modelBuilder.Entity<UserEvent>()
+                .HasOne(ue => ue.User)
+                .WithMany(u => u.UserEvents)
+                .HasForeignKey(bc => bc.UserId);
+            modelBuilder.Entity<UserEvent>()
+                .HasOne(ue => ue.Event)
+                .WithMany(e => e.UserEvents)
+                .HasForeignKey(ue => ue.EventId);
         }
 
     }
+
 }

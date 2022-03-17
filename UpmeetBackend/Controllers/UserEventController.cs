@@ -29,10 +29,10 @@ namespace UpmeetBackend.Controllers
             return FavoriteEvents;
         }
 
-        // POST api/<UserEventController>
+        // POST api/<UserEventController>?userId=userId&eventId=eventId
         [HttpPost]
-        public static void UserFavEvents(int userId, int eventId)
-        {
+        public void UserFavEvents(int userId, int eventId)
+        { 
             User user = new User();
             Event eEvent = new Event();
 
@@ -40,15 +40,22 @@ namespace UpmeetBackend.Controllers
             {
                 user = context.Users.Where(x => x.UserId == userId).FirstOrDefault();
                 eEvent = context.Events.Where(x => x.EventId == eventId).FirstOrDefault();
+                try
+                {
+                    context.UserEvents.Add(new UserEvent() { UserId = userId, EventId = eventId });
+                    context.SaveChanges();
+                }
+                catch (Exception)
+                {
 
-                context.UserEvents.Add(new UserEvent() { UserId = userId, User = user, EventId = eventId, Event = eEvent });
-                context.SaveChanges();
+                }
+                
             }
         }
 
-        // DELETE api/<UserEventController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int userId, int eventId)
+        // DELETE api/<UserEventController>?userId=userId&eventId=eventId
+        [HttpDelete]
+        public static void Delete(int userId, int eventId)
         {
             UserEvent userEvent = new UserEvent();
 
