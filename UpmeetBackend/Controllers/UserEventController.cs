@@ -18,7 +18,6 @@ namespace UpmeetBackend.Controllers
     [ApiController]
     public class UserEventController : ControllerBase
     {
-
         // GET api/<UserEventController>/5
         [HttpGet]
         public ActionResult<IEnumerable<Event>> GetUserFavEvents( int userId)
@@ -31,7 +30,6 @@ namespace UpmeetBackend.Controllers
                         .ThenInclude(e =>e.Event)
                         .First(u =>u.UserId == userId);
                     favEvents = userFavs.UserEvents.Select(e => e.Event).ToList();
-               
             };
 
             return favEvents;
@@ -50,29 +48,18 @@ namespace UpmeetBackend.Controllers
                 eEvent = context.Events.Where(x => x.EventId == eventId).FirstOrDefault();
                 try
                 {
-
                     context.UserEvents.Add(new UserEvent() { UserId = userId, User = user, EventId = eventId, Event = eEvent });
-
                     context.SaveChanges();
                 }
                 catch (Exception)
                 {
 
-                   
-                }
-               
-                
-
-
-                
+                } 
             }
         }
 
-
-
         [HttpDelete]
         public void Delete(int userId, int eventId)
-
         {
             UserEvent userEvent = new UserEvent();
 

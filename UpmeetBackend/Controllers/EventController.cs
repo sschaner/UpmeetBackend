@@ -25,7 +25,7 @@ namespace UpmeetBackend.Controllers
             return result;
         }
 
-        // GET api/<UserController>/id
+        // GET api/<EventController>/id
         [HttpGet("{id}")]
         public Event GetEventById(int id)
         {
@@ -36,6 +36,26 @@ namespace UpmeetBackend.Controllers
             }
 
             return upMeet;
+        }
+
+        // PUT api/<UserController>/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] Event updatedEvent)
+        {
+            List<Event> result = null;
+            Event upMeetEvent = null;
+            using (UpmeetBackendContext context = new UpmeetBackendContext())
+            {
+                result = context.Events.ToList();
+                upMeetEvent = result.Where(x => x.EventId == id).FirstOrDefault();
+                upMeetEvent.Title = updatedEvent.Title;
+                upMeetEvent.Host = updatedEvent.Host;
+                upMeetEvent.Description = updatedEvent.Description;
+                upMeetEvent.Location = updatedEvent.Location;
+                upMeetEvent.Start = updatedEvent.Start;
+                upMeetEvent.End = updatedEvent.End;
+                context.SaveChanges();
+            }
         }
 
         [HttpPost]
